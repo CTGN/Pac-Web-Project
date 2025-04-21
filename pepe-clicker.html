@@ -4,14 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pepe Clicker</title>
+    <link rel="icon" href="./img/normal-pepe.png" type="image/png">
     <style>
         :root {
-            --main-bg-color: #222222;
+            --main-bg-color: #5fa8d3; /* Lighter blue */
             --pepe-green: #88c242;
             --pepe-darker: #6a9932;
-            --text-color: #f0f0f0;
-            --panel-bg: #333333;
-            --button-hover: #4a4a4a;
+            --text-color: #ffffff; /* Pure white text */
+            --panel-bg: #6d4c41; /* Darker wood color */
+            --panel-dark: #4e342e; /* Very dark wood */
+            --panel-light: #8d6e63; /* Medium wood */
+            --wood-image: url('./img/wood.jpg');
+            --button-hover: #87ceeb; /* Sky blue */
+            --panel-border: #ffffff; /* White borders for cloud effect */
         }
         
         * {
@@ -19,15 +24,20 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Arial', sans-serif;
+            cursor: url('./img/funny-pac.png'), auto;
         }
         
         body {
-            background-color: var(--main-bg-color);
+            background-color: #87ceeb;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='300' viewBox='0 0 500 300'%3E%3Cpath fill='%23ffffff' d='M105.1,70.1c-3.1-6.8-9.8-11.6-17.6-11.6c-7.1,0-13.4,3.8-16.7,9.5c-2.1-1.1-4.4-1.8-6.9-1.8c-7.9,0-14.3,6.3-14.4,14.2c-0.1,2.3,0.4,4.4,1.2,6.3C47.9,89.6,46,93.4,46,97.6c0,9.8,8,17.8,17.8,17.8h49.9c9.8,0,17.8-8,17.8-17.8C131.6,85.6,119.7,76.7,105.1,70.1z'/%3E%3Cpath fill='%23ffffff' d='M425.1,210.1c-3.1-6.8-9.8-11.6-17.6-11.6c-7.1,0-13.4,3.8-16.7,9.5c-2.1-1.1-4.4-1.8-6.9-1.8c-7.9,0-14.3,6.3-14.4,14.2c-0.1,2.3,0.4,4.4,1.2,6.3c-2.8,2.9-4.7,6.7-4.7,10.9c0,9.8,8,17.8,17.8,17.8h49.9c9.8,0,17.8-8,17.8-17.8C451.6,225.6,439.7,216.7,425.1,210.1z'/%3E%3Cpath fill='%23ffffff' d='M345.1,40.1c-3.1-6.8-9.8-11.6-17.6-11.6c-7.1,0-13.4,3.8-16.7,9.5c-2.1-1.1-4.4-1.8-6.9-1.8c-7.9,0-14.3,6.3-14.4,14.2c-0.1,2.3,0.4,4.4,1.2,6.3c-2.8,2.9-4.7,6.7-4.7,10.9c0,9.8,8,17.8,17.8,17.8h49.9c9.8,0,17.8-8,17.8-17.8C371.6,55.6,359.7,46.7,345.1,40.1z'/%3E%3Cpath fill='%23ffffff' d='M185.1,150.1c-3.1-6.8-9.8-11.6-17.6-11.6c-7.1,0-13.4,3.8-16.7,9.5c-2.1-1.1-4.4-1.8-6.9-1.8c-7.9,0-14.3,6.3-14.4,14.2c-0.1,2.3,0.4,4.4,1.2,6.3c-2.8,2.9-4.7,6.7-4.7,10.9c0,9.8,8,17.8,17.8,17.8h49.9c9.8,0,17.8-8,17.8-17.8C211.6,165.6,199.7,156.7,185.1,150.1z'/%3E%3C/svg%3E"),
+                linear-gradient(to bottom, #87ceeb, #add8e6);
+            background-repeat: repeat;
             color: var(--text-color);
             padding: 20px;
             max-width: 800px;
             margin: 0 auto;
             text-align: center;
+            transition: background-color 0.5s;
         }
         
         h1 {
@@ -35,33 +45,76 @@
             margin-bottom: 20px;
             font-size: 2.5rem;
             text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+            transform: rotate(-2deg);
+            animation: wiggle 10s ease-in-out infinite;
+        }
+        
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
         }
         
         #game-container {
             display: flex;
             flex-direction: column;
             gap: 20px;
+            position: relative;
+            z-index: 1;
         }
         
         #stats {
             display: flex;
             justify-content: space-between;
-            background-color: var(--panel-bg);
+            background-image: var(--wood-image);
+            background-repeat: repeat-x;
+            background-size: auto 100%;
             padding: 15px;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4);
+            border: 6px solid var(--panel-dark);
+            transform: rotate(1deg);
+            position: relative;
+            overflow: hidden;
+            color: var(--text-color);
+        }
+        
+        #stats:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(60, 30, 15, 0.2);
+            pointer-events: none;
         }
         
         .stat {
             display: flex;
             flex-direction: column;
             align-items: center;
+            transition: transform 0.3s;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            border: 2px solid var(--panel-dark);
+        }
+        
+        .stat:hover {
+            transform: scale(1.05);
+        }
+        
+        .stat div {
+            color: #ffffff; /* Making sure all stat text is white */
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
         }
         
         .stat-value {
             font-size: 1.5rem;
             font-weight: bold;
-            color: var(--pepe-green);
+            color: #ffffff; /* Pure white for maximum contrast */
+            text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.9);
         }
         
         #pepe-button {
@@ -69,8 +122,14 @@
             background: none;
             border: none;
             transition: transform 0.1s;
-            max-width: 200px;
+            max-width: 350px;
             margin: 0 auto;
+            position: relative;
+        }
+        
+        #pepe-button:after {
+            content: "";
+            position: absolute;
         }
         
         #pepe-button:active {
@@ -81,6 +140,11 @@
             width: 100%;
             height: auto;
             filter: drop-shadow(0 0 10px var(--pepe-green));
+            transition: all 0.3s;
+        }
+        
+        #pepe-image:hover {
+            filter: drop-shadow(0 0 15px var(--pepe-green)) brightness(1.1);
         }
         
         #upgrades {
@@ -91,58 +155,108 @@
         }
         
         .upgrade {
-            background-color: var(--panel-bg);
+            background-image: var(--wood-image);
+            background-size: cover;
             border-radius: 10px;
             padding: 15px;
             text-align: left;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s;
+            border-left: 8px solid var(--panel-dark);
+            transform: rotate(0.5deg);
+            position: relative;
+            overflow: hidden;
+            color: var(--text-color);
+        }
+        
+        .upgrade:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(60, 30, 15, 0.2);
+            pointer-events: none;
+        }
+        
+        .upgrade:nth-child(even) {
+            transform: rotate(-0.5deg);
+        }
+        
+        .upgrade:hover {
+            transform: translateY(-5px) rotate(0);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
         
         .upgrade h3 {
-            color: var(--pepe-green);
+            color: #ffffff; /* Pure white for maximum contrast */
             margin-bottom: 10px;
+            font-size: 1.2rem;
+            text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.9);
+            font-weight: bold;
         }
         
         .upgrade-info {
             margin-bottom: 10px;
             font-size: 0.9rem;
+            color: #ffffff; /* Pure white for maximum contrast */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.9);
         }
         
         .buy-button {
-            background-color: var(--pepe-green);
-            color: white;
+            background-color: #5d4037; /* Dark brown */
+            color: #ffffff; /* Pure white text */
             border: none;
             padding: 8px 15px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.1);
         }
         
         .buy-button:hover {
-            background-color: var(--pepe-darker);
+            background-color: #4e342e; /* Very dark brown */
+            transform: translateY(-2px);
+            box-shadow: 0 5px 8px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.1);
         }
         
         .buy-button:disabled {
-            background-color: #555;
+            background-color: #795548; /* Medium brown */
             cursor: not-allowed;
             opacity: 0.7;
+            transform: none;
+            box-shadow: none;
         }
         
         #reset-button {
-            background-color: #d9534f;
-            color: white;
-            border: none;
+            background-color: #b71c1c; /* Darker red */
+            color: #ffffff; /* Pure white text */
+            border: 3px solid var(--panel-dark);
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
             margin-top: 20px;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
         }
         
         #reset-button:hover {
-            background-color: #c9302c;
+            background-color: #f44336; /* Brighter red */
+            transform: scale(1.05);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        #reset-button:active {
+            transform: scale(0.95);
         }
         
         @media (max-width: 600px) {
@@ -163,9 +277,9 @@
         
         /* Animation for clicking */
         @keyframes pepeClick {
-            0% { transform: scale(1); }
-            50% { transform: scale(0.95); }
-            100% { transform: scale(1); }
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(0.95) rotate(-5deg); }
+            100% { transform: scale(1) rotate(0deg); }
         }
         
         .pepe-animation {
@@ -174,13 +288,43 @@
         
         /* Floating pepe animation */
         @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+            0% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-10px) rotate(-2deg); }
+            50% { transform: translateY(0px) rotate(0deg); }
+            75% { transform: translateY(-5px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
         }
         
         #pepe-button {
-            animation: float 3s ease-in-out infinite;
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        /* Rainbow effect for high scores */
+        @keyframes rainbow {
+            0% { color: #ff0000; }
+            16.6% { color: #ff8000; }
+            33.3% { color: #ffff00; }
+            50% { color: #00ff00; }
+            66.6% { color: #0080ff; }
+            83.3% { color: #8000ff; }
+            100% { color: #ff0000; }
+        }
+        
+        .rainbow-text {
+            animation: rainbow 5s linear infinite;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Confetti animation */
+        @keyframes confetti {
+            0% { 
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% { 
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -200,7 +344,7 @@
         </div>
         
         <button id="pepe-button">
-            <img id="pepe-image" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMDAgMzAwIj48cGF0aCBmaWxsPSIjODhjMjQyIiBkPSJNMTQ4IDE4LjVjLTQyLjUgMS0xMDAgMjIuNS0xMjMuNSA2NS0yMy41IDQyLjUtNyAxMDkuNSAyMSAxMzggMjggMjguNSA2NiA2MCAxMjEgNjAgMzEgMCA3NC01LjUgMTAwLTM1LjUgMjYtMzAgNDItNjYuNSAzNS0xMTMuNS03LTQ3LTQ3LjUtOTQuNS04My41LTEwOC00NS0xNi4yLTUxLTYuNS03MC01eiIvPjxwYXRoIGZpbGw9IiM2YTk5MzIiIGQ9Ik0xNDcgNDFjLTMwLjUtLjMtNjcuNSAxMi05MSAzMi0yMC41IDE3LjQtNDMgNDUuNS00MyA4OS41IDAgNDQgMzcuNSA5MiA5MC41IDk1LjUgNDMgMi44IDkwLTExLjUgMTExLjUtMzYuNSAyOC41LTMzLjYgMjkuNS04Ni41IDE1LTExOC41LTE0LjUtMzItMzcuNS01Mi0zOC01Mi0uNS0uNC00LjUtMS0xMC41LTMtNi0yLTguNS03LjMtMzQuNS03eiIvPjxjaXJjbGUgZmlsbD0iI2ZmZiIgY3g9IjExMiIgY3k9IjEzOSIgcj0iMzgiLz48Y2lyY2xlIGZpbGw9IiNmZmYiIGN4PSIxOTkiIGN5PSIxMzkiIHI9IjM4Ii8+PGNpcmNsZSBmaWxsPSIjMDAwIiBjeD0iMTEyIiBjeT0iMTM5IiByPSIxOCIvPjxjaXJjbGUgZmlsbD0iIzAwMCIgY3g9IjE5OSIgY3k9IjEzOSIgcj0iMTgiLz48cGF0aCBkPSJNMTQxIDIxMGMyLjIgMTAgOSAxNiAxNiAxNnMxMy44LTYgMTYtMTZoLTMyeiIvPjwvc3ZnPg==" alt="Pepe">
+            <img id="pepe-image" src="./img/normal-pepe.png" alt="Pepe" draggable="false" oncontextmenu="return false;" style="user-select: none; -webkit-user-drag: none;">
         </button>
         
         <div id="upgrades">
@@ -250,6 +394,9 @@
             
             // Save game periodically
             setInterval(saveGame, 10000);
+            
+            // Add funny tooltips occasionally
+            setInterval(showRandomTip, 30000);
         }
         
         // Click the Pepe
@@ -314,6 +461,19 @@
             pepeCount.textContent = formatNumber(gameState.pepes);
             pepesPerSecond.textContent = formatNumber(gameState.pepesPerSecond);
             
+            // Add rainbow effect for high scores
+            if (gameState.pepes >= 1000000) {
+                pepeCount.classList.add('rainbow-text');
+            } else {
+                pepeCount.classList.remove('rainbow-text');
+            }
+            
+            if (gameState.pepesPerSecond >= 100) {
+                pepesPerSecond.classList.add('rainbow-text');
+            } else {
+                pepesPerSecond.classList.remove('rainbow-text');
+            }
+            
             // Update upgrade buttons
             gameState.upgrades.forEach(upgrade => {
                 const buyButton = document.getElementById(`buy-${upgrade.id}`);
@@ -364,6 +524,31 @@
                 // Update income
                 calculateTotalIncome();
                 
+                // Change Pepe image based on purchased upgrade
+                if (upgrade.owned === 1) {
+                    const pepeImage = document.getElementById('pepe-image');
+                    switch (upgrade.id) {
+                        case 'sad':
+                            pepeImage.src = './img/sad-pepe.png';
+                            break;
+                        case 'smug':
+                            pepeImage.src = './img/smug-pepe.png';
+                            break;
+                        case 'rare':
+                            pepeImage.src = './img/fire-pepe.jpg';
+                            break;
+                        case 'legendary':
+                            pepeImage.src = './img/legendary-pepe.png';
+                            createConfetti();
+                            break;
+                    }
+                }
+                
+                // Create confetti for expensive purchases
+                if (upgrade.cost > 10000) {
+                    createConfetti();
+                }
+                
                 // Update display
                 updateDisplay();
                 renderUpgrades();
@@ -389,6 +574,10 @@
                         owned: 0
                     }))
                 };
+                
+                // Reset Pepe image to normal
+                const pepeImage = document.getElementById('pepe-image');
+                pepeImage.src = './img/normal-pepe.png';
                 
                 updateDisplay();
                 renderUpgrades();
@@ -417,10 +606,32 @@
                         
                         gameState = parsedSave;
                         calculateTotalIncome(); // Recalculate income
+                        
+                        // Update Pepe image based on owned upgrades
+                        updatePepeImage();
                     }
                 } catch (e) {
                     console.error('Error loading save data:', e);
                 }
+            }
+        }
+        
+        // Update Pepe image based on owned upgrades
+        function updatePepeImage() {
+            const pepeImage = document.getElementById('pepe-image');
+            
+            // Check which high-tier Pepes are owned and set the appropriate image
+            // Priority: legendary > rare > smug > sad > normal
+            if (gameState.upgrades.find(u => u.id === 'legendary' && u.owned > 0)) {
+                pepeImage.src = './img/legendary-pepe.png';
+            } else if (gameState.upgrades.find(u => u.id === 'rare' && u.owned > 0)) {
+                pepeImage.src = './img/fire-pepe.jpg';
+            } else if (gameState.upgrades.find(u => u.id === 'smug' && u.owned > 0)) {
+                pepeImage.src = './img/smug-pepe.png';
+            } else if (gameState.upgrades.find(u => u.id === 'sad' && u.owned > 0)) {
+                pepeImage.src = './img/sad-pepe.png';
+            } else {
+                pepeImage.src = './img/normal-pepe.png';
             }
         }
         
@@ -435,6 +646,83 @@
             } else {
                 return num.toFixed(1);
             }
+        }
+        
+        // Create confetti
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'absolute';
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                confetti.style.borderRadius = '50%';
+                confetti.style.pointerEvents = 'none';
+                confetti.style.zIndex = '100';
+                
+                // Position randomly on screen
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.top = -20 + 'px';
+                
+                // Animation
+                const animationDuration = Math.random() * 3 + 2; // 2-5 seconds
+                confetti.style.animation = `confetti ${animationDuration}s ease forwards`;
+                
+                document.body.appendChild(confetti);
+                
+                // Remove after animation completes
+                setTimeout(() => {
+                    document.body.removeChild(confetti);
+                }, animationDuration * 1000);
+            }
+        }
+        
+        // Show random funny tips
+        function showRandomTip() {
+            const tips = [
+                "Pro tip: Click faster for more Pepes!",
+                "Legend says if you get 1 million Pepes, you'll become a meme lord.",
+                "Pepe fact: Pepes reproduce asexually through clicking.",
+                "Did you know? Each Pepe consumed generates energy for more Pepes!",
+                "Warning: Excessive Pepe collecting may result in meme addiction.",
+                "Pepe science: 1 Legendary Pepe = 10,000 normal Pepes compressed.",
+                "Try clicking with your nose for secret bonus Pepes!",
+                "The FBI is monitoring unusual Pepe activity. Stay safe."
+            ];
+            
+            const tip = tips[Math.floor(Math.random() * tips.length)];
+            
+            const tipElement = document.createElement('div');
+            tipElement.textContent = tip;
+            tipElement.style.position = 'fixed';
+            tipElement.style.bottom = '20px';
+            tipElement.style.right = '20px';
+            tipElement.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            tipElement.style.color = '#fff';
+            tipElement.style.padding = '10px 15px';
+            tipElement.style.borderRadius = '5px';
+            tipElement.style.maxWidth = '250px';
+            tipElement.style.zIndex = '1000';
+            tipElement.style.boxShadow = '0 3px 10px rgba(0, 0, 0, 0.2)';
+            tipElement.style.animation = 'fadeInOut 5s forwards';
+            
+            const tipStyle = document.createElement('style');
+            tipStyle.innerHTML = `
+                @keyframes fadeInOut {
+                    0% { opacity: 0; transform: translateY(20px); }
+                    10% { opacity: 1; transform: translateY(0); }
+                    80% { opacity: 1; transform: translateY(0); }
+                    100% { opacity: 0; transform: translateY(-20px); }
+                }
+            `;
+            document.head.appendChild(tipStyle);
+            
+            document.body.appendChild(tipElement);
+            
+            // Remove after animation completes
+            setTimeout(() => {
+                document.body.removeChild(tipElement);
+            }, 5000);
         }
         
         // Initialize game when page loads
