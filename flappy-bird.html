@@ -6,6 +6,10 @@
     <title>Flappy Witch Frog</title>
     <link rel="icon" href="./img/witch-frog.png" type="image/png">
     <style>
+        body, html, * {
+            cursor: url('./img/funny-pac-small.png'), pointer !important;
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -75,6 +79,20 @@
             border-radius: 5px;
         }
         
+        #back-button, #back-menu-button {
+            background-color: #2196F3;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        
         #start-screen {
             position: absolute;
             top: 0;
@@ -126,12 +144,14 @@
             <h2>Game Over!</h2>
             <p id="final-score">Score: 0</p>
             <button id="restart-button">Play Again</button>
+            <button id="back-button">Back to Menu</button>
         </div>
         
         <div id="start-screen">
             <h1>Flappy Witch Frog</h1>
             <p>Press Space or Click/Tap to flap and avoid pipes!</p>
             <button id="start-button">Start Game</button>
+            <button id="back-menu-button">Back to Menu</button>
         </div>
     </div>
 
@@ -145,6 +165,8 @@
         const startScreen = document.getElementById('start-screen');
         const startButton = document.getElementById('start-button');
         const restartButton = document.getElementById('restart-button');
+        const backButton = document.getElementById('back-button');
+        const backMenuButton = document.getElementById('back-menu-button');
         
         // Set canvas dimensions to full screen
         canvas.width = window.innerWidth;
@@ -371,6 +393,15 @@
         restartButton.addEventListener('click', () => {
             gameOverScreen.style.display = 'none';
             startGame();
+        });
+        
+        // Back to menu buttons
+        backButton.addEventListener('click', () => {
+            window.location.href = './game-menu.html';
+        });
+        
+        backMenuButton.addEventListener('click', () => {
+            window.location.href = './game-menu.html';
         });
         
         // Flap controls

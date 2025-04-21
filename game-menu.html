@@ -6,6 +6,10 @@
     <title>Frog Games Menu</title>
     <link rel="icon" href="./img/normal-pepe.png" type="image/png">
     <style>
+        body, html, * {
+            cursor: url('./img/funny-pac-small.png'), pointer !important;
+        }
+        
         :root {
             --main-bg-color: #5fa8d3; /* Lighter blue */
             --panel-dark: #4e342e; /* Very dark wood */
@@ -17,7 +21,6 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Arial', sans-serif;
-            cursor: url('./img/funny-pac.png'), auto;
         }
         
         body {
@@ -173,9 +176,36 @@
             color: #ffffff;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
         }
+        
+        .back-button {
+            background-color: #1565c0;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            text-decoration: none;
+        }
+        
+        .back-button:hover {
+            background-color: #2196f3;
+            transform: scale(1.05);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+        }
     </style>
 </head>
 <body>
+    <a href="scratch.html" class="back-button">Back to Scratch</a>
+    
     <h1>
         <span class="logo-text" style="--i:1;">F</span>
         <span class="logo-text" style="--i:2;">r</span>

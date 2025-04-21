@@ -6,10 +6,14 @@
     <title>Pepe Clicker</title>
     <link rel="icon" href="./img/normal-pepe.png" type="image/png">
     <style>
+        body, html, * {
+            cursor: url('./img/funny-pac-small.png'), pointer !important;
+        }
+        
         :root {
             --main-bg-color: #5fa8d3; /* Lighter blue */
-            --pepe-green: #88c242;
-            --pepe-darker: #6a9932;
+            --pepe-green: #4a7c2a; /* Darker green for title */
+            --pepe-darker: #3a5e1f;
             --text-color: #ffffff; /* Pure white text */
             --panel-bg: #6d4c41; /* Darker wood color */
             --panel-dark: #4e342e; /* Very dark wood */
@@ -24,7 +28,6 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Arial', sans-serif;
-            cursor: url('./img/funny-pac.png'), auto;
         }
         
         body {
@@ -94,10 +97,10 @@
             flex-direction: column;
             align-items: center;
             transition: transform 0.3s;
-            background-color: rgba(0, 0, 0, 0.3);
+            background-color: transparent;
             padding: 10px;
             border-radius: 5px;
-            border: 2px solid var(--panel-dark);
+            border: none;
         }
         
         .stat:hover {
@@ -259,6 +262,35 @@
             transform: scale(0.95);
         }
         
+        #back-button {
+            background-color: #1565c0; /* Blue */
+            color: #ffffff; /* Pure white text */
+            border: 3px solid var(--panel-dark);
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            margin-top: 0;
+        }
+        
+        #back-button:hover {
+            background-color: #2196f3; /* Brighter blue */
+            transform: scale(1.05);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        #back-button:active {
+            transform: scale(0.95);
+        }
+        
         @media (max-width: 600px) {
             #stats {
                 flex-direction: column;
@@ -329,6 +361,7 @@
     </style>
 </head>
 <body>
+    <button id="back-button">Back to Menu</button>
     <h1>Pepe Clicker</h1>
     
     <div id="game-container">
@@ -340,6 +373,10 @@
             <div class="stat">
                 <div>Pepes per Second</div>
                 <div id="pepes-per-second" class="stat-value">0</div>
+            </div>
+            <div class="stat">
+                <div>Click Power</div>
+                <div id="click-power" class="stat-value">1</div>
             </div>
         </div>
         
@@ -359,13 +396,14 @@
         let gameState = {
             pepes: 0,
             pepesPerSecond: 0,
+            clickMultiplier: 1,
             upgrades: [
-                { id: 'tiny', name: 'Tiny Pepe', cost: 10, baseCost: 10, income: 0.1, owned: 0 },
-                { id: 'sad', name: 'Sad Pepe', cost: 100, baseCost: 100, income: 1, owned: 0 },
-                { id: 'smug', name: 'Smug Pepe', cost: 1000, baseCost: 1000, income: 10, owned: 0 },
-                { id: 'rare', name: 'Rare Pepe', cost: 10000, baseCost: 10000, income: 100, owned: 0 },
-                { id: 'epic', name: 'Epic Pepe', cost: 100000, baseCost: 100000, income: 1000, owned: 0 },
-                { id: 'legendary', name: 'Legendary Pepe', cost: 1000000, baseCost: 1000000, income: 10000, owned: 0 }
+                { id: 'tiny', name: 'Tiny Pepe', cost: 10, baseCost: 10, income: 0.1, owned: 0, clickBonus: 0.2 },
+                { id: 'sad', name: 'Sad Pepe', cost: 100, baseCost: 100, income: 1, owned: 0, clickBonus: 1 },
+                { id: 'smug', name: 'Smug Pepe', cost: 1000, baseCost: 1000, income: 10, owned: 0, clickBonus: 5 },
+                { id: 'rare', name: 'Rare Pepe', cost: 10000, baseCost: 10000, income: 100, owned: 0, clickBonus: 25 },
+                { id: 'epic', name: 'Epic Pepe', cost: 100000, baseCost: 100000, income: 1000, owned: 0, clickBonus: 125 },
+                { id: 'legendary', name: 'Legendary Pepe', cost: 1000000, baseCost: 1000000, income: 10000, owned: 0, clickBonus: 500 }
             ]
         };
         
@@ -373,13 +411,18 @@
         const pepeButton = document.getElementById('pepe-button');
         const pepeCount = document.getElementById('pepe-count');
         const pepesPerSecond = document.getElementById('pepes-per-second');
+        const clickPower = document.getElementById('click-power');
         const upgradesContainer = document.getElementById('upgrades');
         const resetButton = document.getElementById('reset-button');
+        const backButton = document.getElementById('back-button');
         
         // Initialize game
         function initGame() {
             // Try to load saved game
             loadGame();
+            
+            // Ensure click multiplier is calculated
+            calculateClickMultiplier();
             
             // Render initial state
             updateDisplay();
@@ -388,6 +431,7 @@
             // Set up event listeners
             pepeButton.addEventListener('click', clickPepe);
             resetButton.addEventListener('click', resetGame);
+            backButton.addEventListener('click', backToMenu);
             
             // Start idle income
             setInterval(idleIncome, 1000);
@@ -401,7 +445,8 @@
         
         // Click the Pepe
         function clickPepe() {
-            gameState.pepes += 1;
+            const clickValue = gameState.clickMultiplier;
+            gameState.pepes += clickValue;
             updateDisplay();
             
             // Add animation
@@ -412,7 +457,7 @@
             }, 200);
             
             // Add floating text
-            createFloatingText('+1');
+            createFloatingText(`+${formatNumber(clickValue)}`);
         }
         
         // Create floating +1 text
@@ -460,6 +505,7 @@
         function updateDisplay() {
             pepeCount.textContent = formatNumber(gameState.pepes);
             pepesPerSecond.textContent = formatNumber(gameState.pepesPerSecond);
+            clickPower.textContent = formatNumber(gameState.clickMultiplier);
             
             // Add rainbow effect for high scores
             if (gameState.pepes >= 1000000) {
@@ -472,6 +518,12 @@
                 pepesPerSecond.classList.add('rainbow-text');
             } else {
                 pepesPerSecond.classList.remove('rainbow-text');
+            }
+            
+            if (gameState.clickMultiplier >= 50) {
+                clickPower.classList.add('rainbow-text');
+            } else {
+                clickPower.classList.remove('rainbow-text');
             }
             
             // Update upgrade buttons
@@ -512,6 +564,28 @@
             });
         }
         
+        // Calculate total income per second
+        function calculateTotalIncome() {
+            gameState.pepesPerSecond = gameState.upgrades.reduce((total, upgrade) => {
+                return total + (upgrade.income * upgrade.owned);
+            }, 0);
+        }
+        
+        // Calculate total click multiplier
+        function calculateClickMultiplier() {
+            // Start with base value of 1
+            let multiplier = 1;
+            
+            // Add bonuses from upgrades
+            gameState.upgrades.forEach(upgrade => {
+                if (upgrade.owned > 0) {
+                    multiplier += upgrade.clickBonus * upgrade.owned;
+                }
+            });
+            
+            gameState.clickMultiplier = multiplier;
+        }
+        
         // Buy upgrade
         function buyUpgrade(upgrade) {
             if (gameState.pepes >= upgrade.cost) {
@@ -523,6 +597,9 @@
                 
                 // Update income
                 calculateTotalIncome();
+                
+                // Update click multiplier
+                calculateClickMultiplier();
                 
                 // Change Pepe image based on purchased upgrade
                 if (upgrade.owned === 1) {
@@ -555,19 +632,13 @@
             }
         }
         
-        // Calculate total income per second
-        function calculateTotalIncome() {
-            gameState.pepesPerSecond = gameState.upgrades.reduce((total, upgrade) => {
-                return total + (upgrade.income * upgrade.owned);
-            }, 0);
-        }
-        
         // Reset game
         function resetGame() {
             if (confirm('Are you sure you want to reset the game? All progress will be lost!')) {
                 gameState = {
                     pepes: 0,
                     pepesPerSecond: 0,
+                    clickMultiplier: 1,
                     upgrades: gameState.upgrades.map(upgrade => ({
                         ...upgrade,
                         cost: upgrade.baseCost,
@@ -578,6 +649,10 @@
                 // Reset Pepe image to normal
                 const pepeImage = document.getElementById('pepe-image');
                 pepeImage.src = './img/normal-pepe.png';
+                
+                // Recalculate values after reset
+                calculateTotalIncome();
+                calculateClickMultiplier();
                 
                 updateDisplay();
                 renderUpgrades();
@@ -604,8 +679,26 @@
                         'pepesPerSecond' in parsedSave && 
                         'upgrades' in parsedSave) {
                         
-                        gameState = parsedSave;
-                        calculateTotalIncome(); // Recalculate income
+                        // Make sure all upgrades have clickBonus property
+                        const upgrades = parsedSave.upgrades.map((upgrade, index) => {
+                            // Ensure clickBonus exists on older saves
+                            if (!upgrade.hasOwnProperty('clickBonus')) {
+                                // Copy the clickBonus from the default upgrades
+                                upgrade.clickBonus = gameState.upgrades[index].clickBonus;
+                            }
+                            return upgrade;
+                        });
+                        
+                        gameState = {
+                            pepes: parsedSave.pepes || 0,
+                            pepesPerSecond: parsedSave.pepesPerSecond || 0,
+                            clickMultiplier: parsedSave.clickMultiplier || 1,
+                            upgrades: upgrades
+                        };
+                        
+                        // Recalculate values after loading
+                        calculateTotalIncome();
+                        calculateClickMultiplier();
                         
                         // Update Pepe image based on owned upgrades
                         updatePepeImage();
@@ -723,6 +816,14 @@
             setTimeout(() => {
                 document.body.removeChild(tipElement);
             }, 5000);
+        }
+        
+        // Back to menu
+        function backToMenu() {
+            // Save game state before leaving
+            saveGame();
+            // Redirect to game menu
+            window.location.href = './game-menu.html';
         }
         
         // Initialize game when page loads
